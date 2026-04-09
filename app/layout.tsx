@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { ToastProvider } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { MainContextMenu } from "@/components/main-context-menu"
-
+import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
@@ -54,6 +54,7 @@ export default function RootLayout({
             </MainContextMenu>
           </ToastProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   )
