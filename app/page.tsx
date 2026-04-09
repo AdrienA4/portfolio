@@ -36,7 +36,7 @@ const EMAIL = "adrien@sartawi.dev"
 const SOCIALS = [
   {
     icon: SiGithub,
-    href: "https://github.com",
+    href: "https://github.com/AdrienA4",
     label: "GitHub",
     color: "#ffffff",
   },

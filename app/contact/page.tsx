@@ -43,7 +43,7 @@ export default function ContactPage() {
         <p className="text-center text-lg font-semibold translate-y-4 font-sans select-none text-foreground/80">Adrien</p>
         <div className="mt-8 flex items-center justify-center gap-4">
           {[
-            { icon: SiGithub, href: "https://github.com", label: "GitHub" },
+            { icon: SiGithub, href: "https://github.com/AdrienA4", label: "GitHub" },
             { icon: SiDiscord, href: "https://discord.com/users/718185533460840450", label: "Discord" },
             { icon: SiRoblox, href: "https://www.roblox.com/users/479580010/profile", label: "Roblox" },
             { icon: SiLeetcode, href: "https://leetcode.com/u/GFWlSYQMfz/", label: "LeetCode" }

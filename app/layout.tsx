@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     description: "Showcasing my work and projects",
     images: [
       {
-        url: "/pfpv2.webp",
+        url: "/pfp.webp",
         width: 600,
         height: 600,
         alt: "Yazeed",
