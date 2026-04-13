@@ -4,7 +4,6 @@ import { useState, useEffect, type Dispatch, type SetStateAction } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
-import { RiReactjsFill, RiNextjsFill, RiTailwindCssFill } from "react-icons/ri"
 import {
   SiTypescript,
   SiNodedotjs,
@@ -17,8 +16,13 @@ import {
   SiDocker,
   SiGo,
   SiRust,
+  SiPython,
+  SiVercel,
+  SiNextdotjs,
+  SiJavascript,
+  SiReact,
+  SiTailwindcss,
 } from "react-icons/si"
-import { IoLogoJavascript } from "react-icons/io5"
 import { Badge } from "@/components/ui/badge"
 import {
   HoverCard,
@@ -173,30 +177,29 @@ export const TechIcon = ({
         />
       )
     case "react":
-      return <RiReactjsFill className={`${iconClass} text-cyan-400`} />
+      return <SiReact className={`${iconClass} text-[#61DAFB]`} />
     case "figma":
-      return <SiFigma className={`${iconClass} text-purple-500`} />
+      return <SiFigma className={`${iconClass} text-[#F24E1E]`} />
     case "rust":
-      return <SiRust className={`${iconClass} text-orange-500`} />
+      return <SiRust className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
     case "go":
-      return <SiGo className={cn(iconClass, "text-[1.2em] text-blue-400")} />
+      return <SiGo className={cn(iconClass, "text-[1.2em] text-[#00ADD8]")} />
     case "typescript":
-      return <SiTypescript className={`${iconClass} text-blue-500`} />
+      return <SiTypescript className={`${iconClass} text-[#3178C6]`} />
     case "nextjs":
-      return <RiNextjsFill className={`${iconClass} text-foreground`} />
+      return <SiNextdotjs className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
     case "nodejs":
-      return <SiNodedotjs className={`${iconClass} text-green-500`} />
-
+      return <SiNodedotjs className={`${iconClass} text-[#339933]`} />
     case "tailwind":
-      return <RiTailwindCssFill className={`${iconClass} text-cyan-400`} />
+      return <SiTailwindcss className={`${iconClass} text-[#06B6D4]`} />
     case "mongodb":
-      return <SiMongodb className={`${iconClass} text-green-600`} />
+      return <SiMongodb className={`${iconClass} text-[#47A248]`} />
     case "sqlite":
-      return <SiSqlite className={`${iconClass} text-blue-600`} />
+      return <SiSqlite className={`${iconClass} text-[#003B57]`} />
     case "docker":
-      return <SiDocker className={`${iconClass} text-blue-400`} />
+      return <SiDocker className={`${iconClass} text-[#2496ED]`} />
     case "framer":
-      return <SiFramer className={`${iconClass} text-purple-500`} />
+      return <SiFramer className={`${iconClass} text-[#0055FF] dark:text-[#FFFFFF]`} />
     case "discordjs":
       return (
         <Image
@@ -208,12 +211,16 @@ export const TechIcon = ({
           className="h-[1.2em] w-[1.2em] object-contain"
         />
       )
+    case "csharp":
+      return <Image src="/csharp.png" alt="C#" width={40} height={40} draggable={false} className="h-[1.2em] w-[1.2em] object-contain" />
     case "express":
-      return <SiExpress className={`${iconClass} text-slate-300`} />
+      return <SiExpress className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
     case "javascript":
-      return <IoLogoJavascript className={`${iconClass} text-yellow-400`} />
+      return <SiJavascript className={`${iconClass} text-[#F7DF1E]`} />
     case "electron":
-      return <SiElectron className={`${iconClass} text-blue-300`} />
+      return <SiElectron className={`${iconClass} text-[#47848F]`} />
+    case "python":
+      return <SiPython className={`${iconClass} text-[#3776AB]`} />
     default:
       return <div className={`${iconClass} rounded bg-gray-500`} />
   }
