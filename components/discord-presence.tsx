@@ -125,16 +125,16 @@ export default function DiscordPresence() {
           <span
             className={cn(
               "absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-card ring-1 ring-foreground/10",
-              statusColors[discord_status]
+              statusColors[discord_status ?? "offline"]
             )}
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-center">
           <h3 className="truncate text-[13px] leading-tight font-semibold text-foreground/90">
-            @{discord_user.username}
+            @{discord_user?.username}
           </h3>
           <p className="mt-0.5 flex items-center gap-1.5 text-[10px] font-medium text-foreground/50 capitalize transition-colors duration-500 select-none group-hover:text-foreground/80">
-            {statusDisplay[discord_status]}
+            {statusDisplay[discord_status ?? "offline"]}
           </p>
         </div>
       </div>
