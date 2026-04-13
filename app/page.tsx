@@ -421,7 +421,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background p-5 lg:p-8">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-5 lg:p-8">
       <AnimatePresence mode="wait">
         {phase === "intro" ? (
           <motion.div

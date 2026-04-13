@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 interface LanyardActivityAssets {
@@ -57,26 +58,7 @@ export default function DiscordPresence() {
     return () => clearInterval(interval)
   }, [])
 
-  if (!isLoaded || !presence?.data) {
-    return (
-      <div className="flex h-full w-full animate-pulse flex-col p-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 shrink-0 rounded-full bg-foreground/10" />
-          <div className="flex flex-1 flex-col gap-1.5">
-            <div className="h-3 w-16 rounded bg-foreground/10" />
-            <div className="h-2 w-12 rounded bg-foreground/10" />
-          </div>
-        </div>
-        <div className="mt-4 flex flex-1 flex-col gap-2 rounded-xl bg-foreground/[0.03] p-3">
-          <div className="h-8 w-8 rounded bg-foreground/10" />
-          <div className="mt-1 h-2 w-20 rounded bg-foreground/10" />
-          <div className="h-2 w-16 rounded bg-foreground/10" />
-        </div>
-      </div>
-    )
-  }
-
-  const { discord_user, discord_status, activities } = presence.data
+  const { discord_user, discord_status, activities } = presence?.data || {}
   const activity = activities?.find((a) => a.type === 0 || a.type === 2) ?? null
 
   const statusColors = {
@@ -93,12 +75,43 @@ export default function DiscordPresence() {
     offline: "Offline",
   }
 
-  const avatarSrc = discord_user.avatar
+  const avatarSrc = discord_user?.avatar
     ? `https://cdn.discordapp.com/avatars/${discord_user.id}/${discord_user.avatar}.png?size=128`
     : `/pfp.webp`
 
   return (
     <div className="group pointer-events-auto flex h-full w-full flex-col justify-start">
+      <AnimatePresence mode="wait">
+        {!isLoaded || !presence?.data ? (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="flex h-full w-full flex-col p-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 shrink-0 rounded-full bg-foreground/10" />
+              <div className="flex flex-1 flex-col gap-1.5">
+                <div className="h-3 w-16 rounded bg-foreground/10" />
+                <div className="h-2 w-12 rounded bg-foreground/10" />
+              </div>
+            </div>
+            <div className="mt-4 flex flex-1 flex-col gap-2 rounded-xl bg-foreground/[0.03] p-3">
+              <div className="h-8 w-8 rounded bg-foreground/10" />
+              <div className="mt-1 h-2 w-20 rounded bg-foreground/10" />
+              <div className="h-2 w-16 rounded bg-foreground/10" />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0, y: 10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="flex h-full w-full flex-col justify-start"
+          >
       <div className="mb-2 flex items-center gap-4">
         <div className="relative select-none">
           <Image
@@ -172,6 +185,9 @@ export default function DiscordPresence() {
           </p>
         </div>
       )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

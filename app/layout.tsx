@@ -6,6 +6,7 @@ import { ToastProvider } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { MainContextMenu } from "@/components/main-context-menu"
 import { Analytics } from "@vercel/analytics/next"
+import NavigationBar from "@/components/navigation-bar"
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
@@ -50,6 +51,7 @@ export default function RootLayout({
         <ThemeProvider>
           <ToastProvider>
             <MainContextMenu>
+              <NavigationBar />
               <main className="transition-all duration-500">{children}</main>
             </MainContextMenu>
           </ToastProvider>
