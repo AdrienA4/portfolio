@@ -89,19 +89,22 @@ export default function DiscordPresence() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="flex h-full w-full flex-col p-4"
+            className="flex h-full w-full flex-col justify-start"
           >
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-full bg-foreground/10" />
+            <div className="mb-2 flex items-center gap-4">
+              <div className="h-[38px] w-[38px] shrink-0 rounded-full bg-foreground/10" />
               <div className="flex flex-1 flex-col gap-1.5">
-                <div className="h-3 w-16 rounded bg-foreground/10" />
+                <div className="h-3 w-20 rounded bg-foreground/10" />
                 <div className="h-2 w-12 rounded bg-foreground/10" />
               </div>
             </div>
-            <div className="mt-4 flex flex-1 flex-col gap-2 rounded-xl bg-foreground/[0.03] p-3">
-              <div className="h-8 w-8 rounded bg-foreground/10" />
-              <div className="mt-1 h-2 w-20 rounded bg-foreground/10" />
-              <div className="h-2 w-16 rounded bg-foreground/10" />
+            <div className="mt-3 flex items-center gap-4 rounded-[18px] bg-foreground/[0.03] p-5">
+              <div className="h-[42px] w-[42px] shrink-0 rounded-lg bg-foreground/10" />
+              <div className="flex flex-1 flex-col gap-1.5">
+                <div className="h-2.5 w-24 rounded bg-foreground/10" />
+                <div className="h-2 w-20 rounded bg-foreground/10" />
+                <div className="h-2 w-16 rounded bg-foreground/10" />
+              </div>
             </div>
           </motion.div>
         ) : (

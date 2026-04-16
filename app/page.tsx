@@ -425,19 +425,6 @@ export default function Page() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-5 lg:p-8">
       <AnimatePresence mode="wait">
-        <Image
-          src={
-            resolvedTheme === "dark"
-              ? "/noaiblack.png"
-              : "/noaiwhite.png"
-          }
-          alt="decoration"
-          width={120}
-          height={120}
-          draggable={false}
-          onClick={() => window.open("https://notbyai.fyi", "_blank")}
-          className="absolute right-2 hover:scale-105 active:scale-85 bottom-2 cursor-pointer opacity-80 transition-all duration-500 select-none"
-        />
         {phase === "intro" ? (
           <motion.div
             key="intro"
@@ -492,6 +479,24 @@ export default function Page() {
               maxWidth: "1100px",
             }}
           >
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute right-2 bottom-2 z-10"
+            >
+              <Image
+                src={
+                  resolvedTheme === "dark" ? "/noaiblack.png" : "/noaiwhite.png"
+                }
+                alt="decoration"
+                width={120}
+                height={120}
+                draggable={false}
+                onClick={() => window.open("https://notbyai.fyi", "_blank")}
+                className="cursor-pointer opacity-80 transition-all duration-500 select-none hover:scale-105 active:scale-85"
+              />
+            </motion.div>
             <BentoCard
               id="bento-hero"
               style={{ gridColumn: "1 / 3", gridRow: "1" }}
