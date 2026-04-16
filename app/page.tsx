@@ -7,6 +7,7 @@ import {
   HTMLMotionProps,
 } from "framer-motion"
 import Image from "next/image"
+import { useTheme } from "next-themes"
 import { SiGithub, SiDiscord, SiRoblox, SiLeetcode } from "react-icons/si"
 import {
   ArrowLeft,
@@ -392,6 +393,7 @@ function Typewriter({ words }: { words: string[] }) {
 
 export default function Page() {
   const [phase, setPhase] = useState<"intro" | "bento">("intro")
+  const { resolvedTheme } = useTheme()
   const [isTechModalOpen, setIsTechModalOpen] = useState(false)
   const [isStackHovered, setIsStackHovered] = useState(false)
   const { toast } = useToast()
@@ -423,6 +425,19 @@ export default function Page() {
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-5 lg:p-8">
       <AnimatePresence mode="wait">
+        <Image
+          src={
+            resolvedTheme === "dark"
+              ? "/noaiblack.png"
+              : "/noaiwhite.png"
+          }
+          alt="decoration"
+          width={120}
+          height={120}
+          draggable={false}
+          onClick={() => window.open("https://notbyai.fyi", "_blank")}
+          className="absolute right-2 hover:scale-105 active:scale-85 bottom-2 cursor-pointer opacity-80 transition-all duration-500 select-none"
+        />
         {phase === "intro" ? (
           <motion.div
             key="intro"
