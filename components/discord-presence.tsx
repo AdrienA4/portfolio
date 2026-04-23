@@ -32,6 +32,7 @@ interface LanyardData {
     discord_user: LanyardUser
     discord_status: "online" | "idle" | "dnd" | "offline"
     activities: LanyardActivity[]
+    active_on_discord_mobile: boolean
   }
 }
 
@@ -46,6 +47,7 @@ export default function DiscordPresence() {
           "https://api.lanyard.rest/v1/users/718185533460840450"
         )
         const json = await res.json()
+        console.log("Discord Presence Data:", json)
         setPresence(json)
         setIsLoaded(true)
       } catch (err) {
@@ -58,14 +60,14 @@ export default function DiscordPresence() {
     return () => clearInterval(interval)
   }, [])
 
-  const { discord_user, discord_status, activities } = presence?.data || {}
+  const { discord_user, discord_status, activities, active_on_discord_mobile } = presence?.data || {}
   const activity = activities?.find((a) => a.type === 0 || a.type === 2) ?? null
 
   const statusColors = {
-    online: "bg-green-500",
-    idle: "bg-yellow-500",
-    dnd: "bg-red-500",
-    offline: "bg-neutral-500",
+    online: "bg-[#479a6d]",
+    idle: "bg-[#f5b358]",
+    dnd: "bg-[#ce3853]",
+    offline: "bg-[#817796]",
   }
 
   const statusDisplay = {
@@ -125,12 +127,35 @@ export default function DiscordPresence() {
             draggable={false}
             className="rounded-full shadow-sm"
           />
-          <span
-            className={cn(
-              "absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-card ring-1 ring-foreground/10",
-              statusColors[discord_status ?? "offline"]
-            )}
-          />
+          {active_on_discord_mobile ? (
+            <div className="absolute -bottom-5 -right-4 z-12 h-11 w-11">
+              <Image
+                key={discord_status}
+                src={
+                  discord_status === "dnd" ? "/dnd.png" : "/online.png"
+                }
+                alt="Mobile Status"
+                width={100}
+                height={100}
+                draggable={false}
+                className="object-contain"
+              />
+            </div>
+          ) : (
+            <span
+              className={cn(
+                "absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-card ring-1 ring-foreground/10 flex items-center justify-center",
+                statusColors[discord_status ?? "offline"]
+              )}
+            >
+              {discord_status === "dnd" && (
+                <div className="h-[2px] w-[5px] bg-black/40 rounded-full" />
+              )}
+              {discord_status === "offline" && (
+                <div className="h-[3.5px] w-[3.5px] bg-card rounded-full" />
+              )}
+            </span>
+          )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col justify-center">
           <h3 className="truncate text-[13px] leading-tight font-semibold text-foreground/90">

@@ -264,6 +264,40 @@ function WeatherIcon({
   return <Cloud className={className} />
 }
 
+function TimeDisplay() {
+  const [time, setTime] = useState<string>("")
+
+  useEffect(() => {
+    const update = () => {
+      const now = new Date()
+      const formatted = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Dubai",
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      }).format(now)
+      setTime(formatted)
+    }
+
+    update()
+    const interval = setInterval(update, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (!time) {
+    return (
+      <div className="h-3 w-12 animate-pulse rounded-full bg-foreground/5" />
+    )
+  }
+
+  return (
+    <span className="text-[10px] font-bold text-foreground/40 transition-colors duration-500 group-hover:text-foreground/70">
+      {time}
+    </span>
+  )
+}
+
 function WeatherWidget() {
   const [weather, setWeather] = useState<WeatherState | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -334,7 +368,7 @@ function WeatherWidget() {
           </p>
         </div>
         <p className="text-[28px] font-bold text-foreground select-none">
-          {Math.round(weather.temperature)}°
+          {Math.round(weather.temperature)}°C
         </p>
       </div>
 
@@ -482,7 +516,11 @@ export default function Page() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.8,
+                delay: 0.9,
+                ease: [0.16, 1, 0.3, 1],
+              }}
               className="absolute right-2 bottom-2 z-10"
             >
               <Image
@@ -687,9 +725,12 @@ export default function Page() {
               style={{ gridColumn: "1", gridRow: "3" }}
               className="flex flex-col"
             >
-              <p className="text-[10px] font-semibold tracking-widest text-foreground/25 uppercase transition-colors duration-500 select-none group-hover:text-foreground/50">
-                Ras Al Khaimah
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[10px] font-semibold tracking-widest text-foreground/25 uppercase transition-colors duration-500 select-none group-hover:text-foreground/50 hover:font-extrabold hover:text-foreground/75">
+                  Ras Al Khaimah
+                </p>
+                <TimeDisplay />
+              </div>
               <div className="mt-3 flex-1">
                 <WeatherWidget />
               </div>
