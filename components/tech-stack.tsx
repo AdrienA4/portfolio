@@ -17,7 +17,6 @@ import {
   SiGo,
   SiRust,
   SiPython,
-  SiVercel,
   SiNextdotjs,
   SiJavascript,
   SiReact,
@@ -181,13 +180,19 @@ export const TechIcon = ({
     case "figma":
       return <SiFigma className={`${iconClass} text-[#F24E1E]`} />
     case "rust":
-      return <SiRust className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
+      return (
+        <SiRust className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
+      )
     case "go":
       return <SiGo className={cn(iconClass, "text-[1.2em] text-[#00ADD8]")} />
     case "typescript":
       return <SiTypescript className={`${iconClass} text-[#3178C6]`} />
     case "nextjs":
-      return <SiNextdotjs className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
+      return (
+        <SiNextdotjs
+          className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`}
+        />
+      )
     case "nodejs":
       return <SiNodedotjs className={`${iconClass} text-[#339933]`} />
     case "tailwind":
@@ -199,7 +204,11 @@ export const TechIcon = ({
     case "docker":
       return <SiDocker className={`${iconClass} text-[#2496ED]`} />
     case "framer":
-      return <SiFramer className={`${iconClass} text-[#0055FF] dark:text-[#FFFFFF]`} />
+      return (
+        <SiFramer
+          className={`${iconClass} text-[#0055FF] dark:text-[#FFFFFF]`}
+        />
+      )
     case "discordjs":
       return (
         <Image
@@ -212,9 +221,22 @@ export const TechIcon = ({
         />
       )
     case "csharp":
-      return <Image src="/csharp.png" alt="C#" width={40} height={40} draggable={false} className="h-[1.2em] w-[1.2em] object-contain" />
+      return (
+        <Image
+          src="/csharp.png"
+          alt="C#"
+          width={40}
+          height={40}
+          draggable={false}
+          className="h-[1.2em] w-[1.2em] object-contain"
+        />
+      )
     case "express":
-      return <SiExpress className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`} />
+      return (
+        <SiExpress
+          className={`${iconClass} text-[#000000] dark:text-[#FFFFFF]`}
+        />
+      )
     case "javascript":
       return <SiJavascript className={`${iconClass} text-[#F7DF1E]`} />
     case "electron":
@@ -257,7 +279,7 @@ function TechItem({
           type="button"
           data-tech-id={itemId}
           data-open={isOpen}
-          className="tech-card mx-2 flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-[14px] border border-border/80 bg-foreground/[0.05] transition-all duration-300 hover:scale-110 hover:border-border hover:bg-foreground/[0.1] hover:shadow-lg"
+          className="tech-card mx-2 flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center rounded-[14px] border border-border/80 bg-foreground/5 transition-all duration-300 hover:scale-110 hover:border-border hover:bg-foreground/10 hover:shadow-lg"
           aria-label={`${name} details`}
           onClick={toggleDetails}
           onFocus={openDetails}

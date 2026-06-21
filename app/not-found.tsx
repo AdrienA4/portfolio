@@ -18,17 +18,16 @@ function Typewriter({ words }: { words: string[] }) {
       return () => clearTimeout(timeout)
     }
 
-    if (subIndex === 0 && reverse) {
-      setReverse(false)
-      setIndex((prev) => (prev + 1) % words.length)
-      return
-    }
-
     const timeout = setTimeout(
       () => {
-        setSubIndex((prev) => prev + (reverse ? -1 : 1))
+        if (subIndex === 0 && reverse) {
+          setReverse(false)
+          setIndex((prev) => (prev + 1) % words.length)
+        } else {
+          setSubIndex((prev) => prev + (reverse ? -1 : 1))
+        }
       },
-      reverse ? 40 : 80
+      subIndex === 0 && reverse ? 80 : reverse ? 40 : 80
     )
 
     return () => clearTimeout(timeout)
@@ -44,18 +43,21 @@ function Typewriter({ words }: { words: string[] }) {
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-6 font-sans overflow-hidden">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-40">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-foreground/[0.03] blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-foreground/[0.02] blur-[120px] rounded-full" />
+    <div className="flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-background p-6 font-sans">
+      <div className="pointer-events-none fixed inset-0 overflow-hidden opacity-40">
+        <div className="absolute top-[-10%] left-[-10%] h-[40%] w-[40%] rounded-full bg-foreground/3 blur-[120px]" />
+        <div className="absolute right-[-10%] bottom-[-10%] h-[40%] w-[40%] rounded-full bg-foreground/2 blur-[120px]" />
       </div>
 
       <div className="absolute top-12 left-12 flex items-center gap-5">
         <TransitionLink
           href="/"
-          className="group flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-foreground/30 transition-all hover:text-foreground"
+          className="group flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] text-foreground/30 uppercase transition-all hover:text-foreground"
         >
-          <ArrowLeft size={12} className="group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft
+            size={12}
+            className="transition-transform group-hover:-translate-x-1"
+          />
           <span>Go back home</span>
         </TransitionLink>
       </div>
@@ -64,16 +66,16 @@ export default function NotFound() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 flex flex-col items-center w-full max-w-3xl px-4"
+        className="relative z-10 flex w-full max-w-3xl flex-col items-center px-4"
       >
-        <div className="w-full relative group">
-          <div className="relative overflow-hidden rounded-[48px] border border-white/[0.08] bg-card/40 backdrop-blur-3xl p-12 md:px-16 md:py-24 shadow-2xl">
-            <div className="absolute inset-0 bg-linear-to-br from-white/[0.02] to-transparent pointer-events-none" />
-            
+        <div className="group relative w-full">
+          <div className="relative overflow-hidden rounded-[48px] border border-white/8 bg-card/40 p-12 shadow-2xl backdrop-blur-3xl md:px-16 md:py-24">
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-white/2 to-transparent" />
+
             <div className="relative z-10 flex flex-col items-center text-center">
               <div className="relative mb-12">
-                <div className="absolute -inset-8 bg-foreground/[0.02] blur-3xl rounded-full" />
-                <div className="relative h-48 w-48 md:h-64 md:w-64 rounded-full p-1.5 bg-linear-to-b from-border/50 to-transparent shadow-2xl">
+                <div className="absolute -inset-8 rounded-full bg-foreground/2 blur-3xl" />
+                <div className="relative h-48 w-48 rounded-full bg-linear-to-b from-border/50 to-transparent p-1.5 shadow-2xl md:h-64 md:w-64">
                   <Image
                     src="/pfp.webp"
                     alt="Adrien"
@@ -82,27 +84,39 @@ export default function NotFound() {
                     className="rounded-full object-cover shadow-2xl"
                   />
                 </div>
-                <motion.div 
+                <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                  className="absolute -inset-6 rounded-full border-2 border-dashed border-foreground/[0.05] pointer-events-none" 
+                  transition={{
+                    duration: 30,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  className="pointer-events-none absolute -inset-6 rounded-full border-2 border-dashed border-foreground/5"
                 />
               </div>
 
               <div className="mb-8">
-                <h1 className="text-8xl md:text-9xl font-black tracking-tighter selection:bg-foreground selection:text-background leading-none">
+                <h1 className="text-8xl leading-none font-black tracking-tighter selection:bg-foreground selection:text-background md:text-9xl">
                   <span className="bg-linear-to-b from-foreground to-foreground/20 bg-clip-text text-transparent italic">
                     404
                   </span>
                 </h1>
               </div>
 
-              <div className="flex flex-col items-center gap-6 mb-12">
-                <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground text-center">
-                  <Typewriter words={["Not today g", "Where u going lil bro", "Not here g", "try again g", "off u go lil bro"]} />
+              <div className="mb-12 flex flex-col items-center gap-6">
+                <h2 className="text-center text-2xl font-black tracking-tight text-foreground md:text-3xl">
+                  <Typewriter
+                    words={[
+                      "Not today g",
+                      "Where u going lil bro",
+                      "Not here g",
+                      "try again g",
+                      "off u go lil bro",
+                    ]}
+                  />
                 </h2>
-                
-                <p className="text-sm font-medium text-foreground/40 text-center">
+
+                <p className="text-center text-sm font-medium text-foreground/40">
                   The page you&apos;re looking for doesn&apos;t exist blud.
                 </p>
               </div>
@@ -111,8 +125,8 @@ export default function NotFound() {
                 href="/"
                 className={cn(
                   "inline-flex w-full max-w-md items-center justify-center gap-2 rounded-2xl",
-                  "bg-foreground text-background px-8 py-5 text-base font-bold",
-                  "transition-all duration-300 hover:opacity-90 active:scale-95 shadow-lg shadow-black/10"
+                  "bg-foreground px-8 py-5 text-base font-bold text-background",
+                  "shadow-lg shadow-black/10 transition-all duration-300 hover:opacity-90 active:scale-95"
                 )}
               >
                 <Home size={18} />
@@ -130,13 +144,13 @@ export default function NotFound() {
       </motion.div>
 
       <motion.div
-        animate={{ 
+        animate={{
           y: [0, -30, 0],
           x: [0, 15, 0],
-          opacity: [0.05, 0.08, 0.05]
+          opacity: [0.05, 0.08, 0.05],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="fixed bottom-20 right-20 pointer-events-none select-none hidden lg:block"
+        className="pointer-events-none fixed right-20 bottom-20 hidden select-none lg:block"
       >
         <Ghost size={120} className="text-foreground" />
       </motion.div>

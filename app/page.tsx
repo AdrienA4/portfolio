@@ -26,13 +26,10 @@ import {
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import TechStackCarousel from "@/components/tech-stack"
-import { useToast } from "@/components/ui/sonner"
 import Loader from "@/components/ui/spinner"
 import { TransitionLink } from "@/components/transition-link"
 import DiscordPresence from "@/components/discord-presence"
 import { techStack, TechIcon } from "@/components/tech-stack"
-
-const EMAIL = "adrien@sartawi.dev"
 
 const SOCIALS = [
   {
@@ -125,7 +122,7 @@ function BentoCard({
         "group relative overflow-hidden rounded-[18px]",
         "border border-border bg-card",
         "p-5 transition-colors duration-500",
-        "hover:border-border/80 hover:bg-foreground/[0.025]",
+        "hover:border-border/80 hover:bg-foreground/2.5",
         className
       )}
       {...props}
@@ -372,7 +369,7 @@ function WeatherWidget() {
         </p>
       </div>
 
-      <div className="flex gap-4 border-t border-border/[0.06] pt-3 select-none">
+      <div className="flex gap-4 border-t border-border/6 pt-3 select-none">
         <div className="flex items-center gap-1.5">
           <Droplets className="h-3.5 w-3.5 text-blue-400" />
           <span className="text-[10px] font-semibold text-foreground/60 transition-colors duration-500 group-hover:text-foreground/80">
@@ -402,9 +399,11 @@ function Typewriter({ words }: { words: string[] }) {
     }
 
     if (subIndex === 0 && reverse) {
-      setReverse(false)
-      setIndex((prev) => (prev + 1) % words.length)
-      return
+      const timeout = setTimeout(() => {
+        setReverse(false)
+        setIndex((prev) => (prev + 1) % words.length)
+      }, 0)
+      return () => clearTimeout(timeout)
     }
 
     const timeout = setTimeout(
@@ -430,7 +429,6 @@ export default function Page() {
   const { resolvedTheme } = useTheme()
   const [isTechModalOpen, setIsTechModalOpen] = useState(false)
   const [isStackHovered, setIsStackHovered] = useState(false)
-  const { toast } = useToast()
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -447,15 +445,6 @@ export default function Page() {
     return () => clearTimeout(t)
   }, [])
 
-  const copyEmail = () => {
-    navigator.clipboard.writeText(EMAIL)
-    toast({
-      title: "Email copied",
-      description: "Successfully copied to clipboard!",
-      variant: "success",
-    })
-  }
-
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-5 lg:p-8">
       <AnimatePresence mode="wait">
@@ -466,7 +455,7 @@ export default function Page() {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="flex -translate-y-5 items-center gap-6"
+            className="flex -translate-y-5 flex-col items-center gap-4 md:flex-row md:gap-6"
           >
             <motion.div variants={blurIn}>
               <Image
@@ -475,12 +464,12 @@ export default function Page() {
                 width={200}
                 height={200}
                 draggable={false}
-                className="rounded-full border-4 border-border/10 shadow-2xl duration-300 select-none hover:scale-105"
+                className="h-28 w-28 rounded-full border-4 border-border/10 shadow-2xl duration-300 select-none hover:scale-105 md:h-50 md:w-50"
               />
             </motion.div>
 
             <motion.div variants={blurIn}>
-              <h1 className="flex items-center gap-3 font-sans text-4xl font-extrabold text-foreground">
+              <h1 className="flex items-center gap-3 font-sans text-2xl font-extrabold text-foreground md:text-4xl">
                 Hello, I&apos;m Adrien
                 <motion.span
                   initial={{ rotate: 0 }}
@@ -504,14 +493,7 @@ export default function Page() {
             variants={gridVars}
             initial="hidden"
             animate="visible"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gridTemplateRows: "192px 192px 158px",
-              gap: "16px",
-              width: "100%",
-              maxWidth: "1100px",
-            }}
+            className="grid w-full max-w-275 grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:auto-rows-auto lg:grid-cols-4 lg:grid-rows-[192px_192px_158px]"
           >
             <motion.div
               initial={{ opacity: 0, y: 8 }}
@@ -521,7 +503,7 @@ export default function Page() {
                 delay: 0.9,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="absolute right-2 bottom-2 z-10"
+              className="absolute right-2 bottom-2 z-10 hidden md:block"
             >
               <Image
                 src={
@@ -537,8 +519,7 @@ export default function Page() {
             </motion.div>
             <BentoCard
               id="bento-hero"
-              style={{ gridColumn: "1 / 3", gridRow: "1" }}
-              className="justify-between"
+              className="justify-between md:col-span-2 lg:col-span-2 lg:row-start-1"
             >
               <div className="space-y-2.5">
                 <div className="flex items-center gap-2">
@@ -561,7 +542,7 @@ export default function Page() {
                     👋
                   </motion.span>
                 </h1>
-                <div className="min-h-[20px] max-w-[260px] text-sm leading-relaxed text-foreground/45 transition-colors duration-500 group-hover:text-foreground/80">
+                <div className="min-h-5 max-w-65 text-sm leading-relaxed text-foreground/45 transition-colors duration-500 group-hover:text-foreground/80">
                   <Typewriter
                     words={[
                       "Full-stack Developer",
@@ -586,31 +567,30 @@ export default function Page() {
 
             <BentoCard
               id="bento-phone"
-              style={{ gridColumn: "3", gridRow: "1" }}
+              className="lg:col-start-3 lg:row-start-1"
             >
               <DiscordPresence />
             </BentoCard>
 
             <BentoCard
               id="bento-social"
-              style={{ gridColumn: "4", gridRow: "1 / 3" }}
-              className="flex flex-col"
+              className="flex flex-col md:col-span-2 lg:col-start-4 lg:row-span-2 lg:row-start-1"
             >
               <p className="mb-4 text-[10px] font-semibold tracking-widest text-foreground/25 uppercase transition-colors duration-500 group-hover:text-foreground/50">
                 Find me on
               </p>
               <div className="flex flex-1 flex-col justify-start gap-3">
-                {SOCIALS.map(({ icon: Icon, href, label, color }) => (
+                {SOCIALS.map(({ icon: Icon, href, label }) => (
                   <a
                     key={label}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="group relative flex w-full items-center justify-between rounded-xl border border-border bg-foreground/[0.02] p-2.5 transition-all duration-300 hover:border-border hover:bg-foreground/[0.06]"
+                    className="group relative flex w-full items-center justify-between rounded-xl border border-border bg-foreground/2 p-2.5 transition-all duration-300 hover:border-border hover:bg-foreground/6"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/[0.04]">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground/4">
                         <Icon className="text-[15px] text-foreground" />
                       </div>
                       <span className="text-xs font-medium text-foreground/70 transition-colors group-hover:text-foreground">
@@ -628,8 +608,7 @@ export default function Page() {
 
             <BentoCard
               id="bento-photo"
-              style={{ gridColumn: "1", gridRow: "2" }}
-              className="p-0"
+              className="aspect-square p-0 md:aspect-auto lg:col-start-1 lg:row-start-2"
             >
               <Image
                 src="/pfp.webp"
@@ -638,13 +617,12 @@ export default function Page() {
                 draggable={false}
                 className="object-cover select-none"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
             </BentoCard>
 
             <BentoCard
               id="bento-projects"
-              style={{ gridColumn: "2 / 4", gridRow: "2" }}
-              className="flex flex-col"
+              className="flex flex-col md:col-span-2 lg:col-span-2 lg:col-start-2 lg:row-start-2"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[10px] font-semibold tracking-widest text-foreground/25 uppercase transition-colors duration-500 group-hover:text-foreground/50">
@@ -667,7 +645,7 @@ export default function Page() {
                   href="https://touchgrass.giize.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-1 items-center gap-3 rounded-xl border border-border/50 bg-foreground/[0.02] p-2 transition-colors hover:border-border/[0.1] hover:bg-foreground/[0.04]"
+                  className="group flex flex-1 items-center gap-3 rounded-xl border border-border/50 bg-foreground/2 p-2 transition-colors hover:border-border/10 hover:bg-foreground/4"
                 >
                   <div className="flex aspect-square h-full shrink-0 items-center justify-center rounded-lg bg-black transition-colors group-hover:bg-black/80">
                     <span className="text-[8px] text-foreground/20 uppercase">
@@ -694,9 +672,9 @@ export default function Page() {
                   href="https://tchscreenapp.is-a.software"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-1 items-center gap-3 rounded-xl border border-border/50 bg-foreground/[0.02] p-2 transition-colors hover:border-border/[0.1] hover:bg-foreground/[0.04]"
+                  className="group flex flex-1 items-center gap-3 rounded-xl border border-border/50 bg-foreground/2 p-2 transition-colors hover:border-border/10 hover:bg-foreground/4"
                 >
-                  <div className="flex aspect-square h-full shrink-0 items-center justify-center rounded-lg bg-foreground/[0.08] transition-colors group-hover:bg-foreground/[0.12]">
+                  <div className="flex aspect-square h-full shrink-0 items-center justify-center rounded-lg bg-foreground/8 transition-colors group-hover:bg-foreground/12">
                     <span className="text-[8px] text-foreground/20 uppercase">
                       <Image
                         src="https://tchscreenapp.is-a.software/favicon.ico"
@@ -722,8 +700,7 @@ export default function Page() {
 
             <BentoCard
               id="bento-weather"
-              style={{ gridColumn: "1", gridRow: "3" }}
-              className="flex flex-col"
+              className="flex flex-col lg:col-start-1 lg:row-start-3"
             >
               <div className="flex items-center justify-between">
                 <p className="text-[10px] font-semibold tracking-widest text-foreground/25 uppercase transition-colors duration-500 select-none group-hover:text-foreground/50 hover:font-extrabold hover:text-foreground/75">
@@ -738,8 +715,7 @@ export default function Page() {
 
             <BentoCard
               id="bento-stack"
-              style={{ gridColumn: "2 / 4", gridRow: "3" }}
-              className="flex flex-col overflow-hidden"
+              className="flex flex-col overflow-hidden md:col-span-2 lg:col-span-2 lg:col-start-2 lg:row-start-3"
               onMouseEnter={() => setIsStackHovered(true)}
               onMouseLeave={() => setIsStackHovered(false)}
             >
@@ -771,8 +747,7 @@ export default function Page() {
 
             <BentoCard
               id="bento-cta"
-              style={{ gridColumn: "4", gridRow: "3" }}
-              className="justify-between"
+              className="justify-between lg:col-start-4 lg:row-start-3"
             >
               <p className="text-sm leading-snug font-medium text-foreground/75 transition-colors duration-500 group-hover:text-foreground">
                 Have a project in mind?
@@ -782,9 +757,9 @@ export default function Page() {
                 href="/contact"
                 className={cn(
                   "inline-flex w-full items-center justify-center gap-2 rounded-[10px]",
-                  "border border-border bg-foreground/[0.06] px-3 py-2.5",
-                  "translate-y-9 text-[11px] font-semibold text-foreground/60",
-                  "transition-all duration-150 hover:border-border hover:bg-foreground/[0.11] hover:text-foreground/85 active:scale-95"
+                  "border border-border bg-foreground/6 px-3 py-2.5",
+                  "translate-y-0 text-[11px] font-semibold text-foreground/60 lg:translate-y-9",
+                  "transition-all duration-150 hover:border-border hover:bg-foreground/11 hover:text-foreground/85 active:scale-95"
                 )}
               >
                 <>
@@ -839,7 +814,7 @@ export default function Page() {
                       damping: 15,
                       delay: (index % 3) * 0.05,
                     }}
-                    className="group flex h-full flex-col items-start justify-between gap-4 rounded-2xl border border-border/50 bg-foreground/[0.02] p-5 transition-all hover:border-border hover:bg-foreground/[0.05]"
+                    className="group flex h-full flex-col items-start justify-between gap-4 rounded-2xl border border-border/50 bg-foreground/2 p-5 transition-all hover:border-border hover:bg-foreground/5"
                   >
                     <div className="flex w-full items-center gap-4">
                       <TechIcon

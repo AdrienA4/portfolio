@@ -8,6 +8,7 @@ import { MainContextMenu } from "@/components/main-context-menu"
 import { Analytics } from "@vercel/analytics/next"
 import NavigationBar from "@/components/navigation-bar"
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+import { ToggleTheme } from "@/components/ui/toggle-theme"
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -50,6 +51,9 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <ToastProvider>
+            <div className="fixed top-4 right-4 z-60">
+              <ToggleTheme />
+            </div>
             <MainContextMenu>
               <NavigationBar />
               <main className="transition-all duration-500">{children}</main>

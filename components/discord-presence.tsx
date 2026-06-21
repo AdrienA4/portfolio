@@ -37,30 +37,80 @@ interface LanyardData {
 }
 
 export default function DiscordPresence() {
+  const userId = "718185533460840450"
   const [presence, setPresence] = useState<LanyardData | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    const fetchPresence = async () => {
-      try {
-        const res = await fetch(
-          "https://api.lanyard.rest/v1/users/718185533460840450"
-        )
-        const json = await res.json()
-        console.log("Discord Presence Data:", json)
-        setPresence(json)
-        setIsLoaded(true)
-      } catch (err) {
-        console.error("Failed to fetch Discord presence:", err)
+    let ws: WebSocket | null = null
+    let heartbeatInterval: ReturnType<typeof setInterval>
+    let reconnectTimer: ReturnType<typeof setTimeout>
+    let subscribed = false
+
+    let intentionalClose = false
+
+    const connect = () => {
+      intentionalClose = false
+      ws = new WebSocket("wss://api.lanyard.rest/socket")
+
+      ws.onopen = () => {
+        // Wait for Hello (op 1) before sending Initialize
+      }
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data)
+
+        if (data.op === 1) {
+          heartbeatInterval = setInterval(() => {
+            ws?.send(JSON.stringify({ op: 3 }))
+          }, data.d.heartbeat_interval)
+
+          ws?.send(
+            JSON.stringify({
+              op: 2,
+              d: {
+                subscribe_to_id: userId,
+              },
+            })
+          )
+          return
+        }
+
+        if (data.op === 0 && (data.t === "INIT_STATE" || data.t === "PRESENCE_UPDATE")) {
+          setPresence({ data: data.d })
+          if (!subscribed) {
+            subscribed = true
+            setIsLoaded(true)
+          }
+        }
+      }
+
+      ws.onclose = () => {
+        clearInterval(heartbeatInterval)
+        if (!intentionalClose) {
+          reconnectTimer = setTimeout(() => {
+            connect()
+          }, 3000)
+        }
+      }
+
+      ws.onerror = () => {
+        ws?.close()
       }
     }
 
-    fetchPresence()
-    const interval = setInterval(fetchPresence, 15000)
-    return () => clearInterval(interval)
+    connect()
+
+    return () => {
+      intentionalClose = true
+      clearInterval(heartbeatInterval)
+      clearTimeout(reconnectTimer)
+      ws?.close()
+    }
   }, [])
 
-  const { discord_user, discord_status, activities, active_on_discord_mobile } = presence?.data || {}
+  const { discord_user, discord_status, activities, active_on_discord_mobile } =
+    presence?.data || {}
   const activity = activities?.find((a) => a.type === 0 || a.type === 2) ?? null
 
   const statusColors = {
@@ -94,14 +144,14 @@ export default function DiscordPresence() {
             className="flex h-full w-full flex-col justify-start"
           >
             <div className="mb-2 flex items-center gap-4">
-              <div className="h-[38px] w-[38px] shrink-0 rounded-full bg-foreground/10" />
+              <div className="h-9.5 w-9.5 shrink-0 rounded-full bg-foreground/10" />
               <div className="flex flex-1 flex-col gap-1.5">
                 <div className="h-3 w-20 rounded bg-foreground/10" />
                 <div className="h-2 w-12 rounded bg-foreground/10" />
               </div>
             </div>
-            <div className="mt-3 flex items-center gap-4 rounded-[18px] bg-foreground/[0.03] p-5">
-              <div className="h-[42px] w-[42px] shrink-0 rounded-lg bg-foreground/10" />
+            <div className="mt-3 flex items-center gap-4 rounded-[18px] bg-foreground/3 p-5">
+              <div className="h-10.5 w-10.5 shrink-0 rounded-lg bg-foreground/10" />
               <div className="flex flex-1 flex-col gap-1.5">
                 <div className="h-2.5 w-24 rounded bg-foreground/10" />
                 <div className="h-2 w-20 rounded bg-foreground/10" />
@@ -117,102 +167,102 @@ export default function DiscordPresence() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="flex h-full w-full flex-col justify-start"
           >
-      <div className="mb-2 flex items-center gap-4">
-        <div className="relative select-none">
-          <Image
-            src={avatarSrc}
-            alt="Discord Avatar"
-            width={38}
-            height={38}
-            draggable={false}
-            className="rounded-full shadow-sm"
-          />
-          {active_on_discord_mobile ? (
-            <div className="absolute -bottom-5 -right-4 z-12 h-11 w-11">
-              <Image
-                key={discord_status}
-                src={
-                  discord_status === "dnd" ? "/dnd.png" : "/online.png"
-                }
-                alt="Mobile Status"
-                width={100}
-                height={100}
-                draggable={false}
-                className="object-contain"
-              />
+            <div className="mb-2 flex items-center gap-4">
+              <div className="relative select-none">
+                <Image
+                  src={avatarSrc}
+                  alt="Discord Avatar"
+                  width={38}
+                  height={38}
+                  draggable={false}
+                  className="rounded-full shadow-sm"
+                />
+                {active_on_discord_mobile ? (
+                  <div className="absolute -right-4 -bottom-5 z-12 h-11 w-11">
+                    <Image
+                      key={discord_status}
+                      src={
+                        discord_status === "dnd" ? "/dnd.png" : "/online.png"
+                      }
+                      alt="Mobile Status"
+                      width={100}
+                      height={100}
+                      draggable={false}
+                      className="object-contain"
+                    />
+                  </div>
+                ) : (
+                  <span
+                    className={cn(
+                      "absolute right-0 bottom-0 flex h-3 w-3 items-center justify-center rounded-full border-2 border-card ring-1 ring-foreground/10",
+                      statusColors[discord_status ?? "offline"]
+                    )}
+                  >
+                    {discord_status === "dnd" && (
+                      <div className="h-0.5 w-1.25 rounded-full bg-black/40" />
+                    )}
+                    {discord_status === "offline" && (
+                      <div className="h-[3.5px] w-[3.5px] rounded-full bg-card" />
+                    )}
+                  </span>
+                )}
+              </div>
+              <div className="flex min-w-0 flex-1 flex-col justify-center">
+                <h3 className="truncate text-[13px] leading-tight font-semibold text-foreground/90">
+                  @{discord_user?.username}
+                </h3>
+                <p className="mt-0.5 flex items-center gap-1.5 text-[10px] font-medium text-foreground/50 capitalize transition-colors duration-500 select-none group-hover:text-foreground/80">
+                  {statusDisplay[discord_status ?? "offline"]}
+                </p>
+              </div>
             </div>
-          ) : (
-            <span
-              className={cn(
-                "absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-card ring-1 ring-foreground/10 flex items-center justify-center",
-                statusColors[discord_status ?? "offline"]
-              )}
-            >
-              {discord_status === "dnd" && (
-                <div className="h-[2px] w-[5px] bg-black/40 rounded-full" />
-              )}
-              {discord_status === "offline" && (
-                <div className="h-[3.5px] w-[3.5px] bg-card rounded-full" />
-              )}
-            </span>
-          )}
-        </div>
-        <div className="flex min-w-0 flex-1 flex-col justify-center">
-          <h3 className="truncate text-[13px] leading-tight font-semibold text-foreground/90">
-            @{discord_user?.username}
-          </h3>
-          <p className="mt-0.5 flex items-center gap-1.5 text-[10px] font-medium text-foreground/50 capitalize transition-colors duration-500 select-none group-hover:text-foreground/80">
-            {statusDisplay[discord_status ?? "offline"]}
-          </p>
-        </div>
-      </div>
 
-      {activity ? (
-        <div className="mt-3 flex items-center gap-4 rounded-[18px] bg-foreground/[0.03] p-5 transition-all duration-300 hover:bg-foreground/[0.05]">
-          {activity.assets?.large_image ? (
-            <Image
-              src={
-                activity.assets.large_image.startsWith("mp:external")
-                  ? activity.assets.large_image.replace(
-                      "mp:external/",
-                      "https://media.discordapp.net/external/"
-                    )
-                  : `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`
-              }
-              alt={activity.assets.large_text || "Activity"}
-              width={42}
-              height={42}
-              draggable={false}
-              className="shrink-0 rounded-lg border border-border/10"
-            />
-          ) : (
-            <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-lg bg-foreground/10">
-              <span className="text-[11px] text-foreground/50">?</span>
-            </div>
-          )}
-          <div className="flex min-w-0 flex-col justify-center gap-0.5">
-            <p className="truncate text-[11px] leading-tight font-bold text-foreground/80">
-              {activity.name}
-            </p>
-            {activity.details && (
-              <p className="truncate text-[10px] leading-tight text-foreground/50 transition-colors duration-500 group-hover:text-foreground/80">
-                {activity.details}
-              </p>
+            {activity ? (
+              <div className="mt-3 flex items-center gap-4 rounded-[18px] bg-foreground/3 p-5 transition-all duration-300 hover:bg-foreground/5">
+                {activity.assets?.large_image ? (
+                  <Image
+                    src={
+                      activity.assets.large_image.startsWith("mp:external")
+                        ? activity.assets.large_image.replace(
+                            "mp:external/",
+                            "https://media.discordapp.net/external/"
+                          )
+                        : `https://cdn.discordapp.com/app-assets/${activity.application_id}/${activity.assets.large_image}.png`
+                    }
+                    alt={activity.assets.large_text || "Activity"}
+                    width={42}
+                    height={42}
+                    draggable={false}
+                    className="shrink-0 rounded-lg border border-border/10"
+                  />
+                ) : (
+                  <div className="flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-lg bg-foreground/10">
+                    <span className="text-[11px] text-foreground/50">?</span>
+                  </div>
+                )}
+                <div className="flex min-w-0 flex-col justify-center gap-0.5">
+                  <p className="truncate text-[11px] leading-tight font-bold text-foreground/80">
+                    {activity.name}
+                  </p>
+                  {activity.details && (
+                    <p className="truncate text-[10px] leading-tight text-foreground/50 transition-colors duration-500 group-hover:text-foreground/80">
+                      {activity.details}
+                    </p>
+                  )}
+                  {activity.state && (
+                    <p className="truncate text-[10px] leading-tight text-foreground/40 transition-colors duration-500 group-hover:text-foreground/70">
+                      {activity.state}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-3 flex items-center justify-center rounded-[18px] bg-foreground/2 p-8 select-none">
+                <p className="text-[10px] text-foreground/30 italic">
+                  Not doing anything...
+                </p>
+              </div>
             )}
-            {activity.state && (
-              <p className="truncate text-[10px] leading-tight text-foreground/40 transition-colors duration-500 group-hover:text-foreground/70">
-                {activity.state}
-              </p>
-            )}
-          </div>
-        </div>
-      ) : (
-        <div className="mt-3 flex items-center justify-center rounded-[18px] bg-foreground/[0.02] p-8 select-none">
-          <p className="text-[10px] text-foreground/30 italic">
-            Not doing anything...
-          </p>
-        </div>
-      )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -161,7 +161,7 @@ export default function ProjectsPage() {
         </h1>
       </motion.div>
 
-      <div className="mx-auto grid max-w-[1400px] auto-rows-max grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mx-auto grid max-w-350 auto-rows-max grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
           <motion.div
             key={project.title}
@@ -226,7 +226,7 @@ export default function ProjectsPage() {
                       href={project.isPrivate ? "#" : project.github}
                       target={project.isPrivate ? undefined : "_blank"}
                       rel="noopener noreferrer"
-                      className="rounded-full bg-foreground/[0.03] p-2 text-foreground/40 transition-all hover:bg-foreground/10 hover:text-foreground"
+                      className="rounded-full bg-foreground/3 p-2 text-foreground/40 transition-all hover:bg-foreground/10 hover:text-foreground"
                     >
                       <SiGithub size={20} />
                     </a>
@@ -234,7 +234,7 @@ export default function ProjectsPage() {
                       href={project.link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="rounded-full bg-foreground/[0.03] p-2 text-foreground/40 transition-all hover:bg-foreground/10 hover:text-foreground"
+                      className="rounded-full bg-foreground/3 p-2 text-foreground/40 transition-all hover:bg-foreground/10 hover:text-foreground"
                     >
                       <ExternalLink size={20} />
                     </a>
@@ -256,7 +256,7 @@ export default function ProjectsPage() {
                           className="group/tech relative flex items-center justify-center"
                           style={
                             {
-                              "--brand-color": (t as any).color,
+                              "--brand-color": t.color,
                             } as React.CSSProperties
                           }
                         >
@@ -279,9 +279,12 @@ export default function ProjectsPage() {
                             {t.name}
                           </span>
                         </div>
-                        {project.title === "Hello, World!" && t.name === "Rust" && (
-                          <span className="text-lg font-bold text-foreground/40 -ml-2">...</span>
-                        )}
+                        {project.title === "Hello, World!" &&
+                          t.name === "Rust" && (
+                            <span className="-ml-2 text-lg font-bold text-foreground/40">
+                              ...
+                            </span>
+                          )}
                       </div>
                     )
                   })}
